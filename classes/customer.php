@@ -19,8 +19,8 @@ class Customer
         return $result;
     }
 
-    public function getCustermerList () {
-        $result =  $this->db->query("Select * from `customers` where `deleted`= '0'") ;
+    public function getNonDormantCustermerList () {
+        $result =  $this->db->query("Select * from `customers` where `status` != '9' ") ;
         return $result;
     }
 

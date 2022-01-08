@@ -125,11 +125,11 @@ $( "#submit-form" ).click(function(e) {
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="phoneNumber">Personal Phone Number*</label>
-            <input type="text" maxlength=15 class="form-control" id="phoneNumber" name="phoneNumber" value="<?php echo $phoneNumber;?>" required> 
+            <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="<?php echo $phoneNumber;?>" required> 
           </div>
           <div class="form-group col-md-6">
             <label for="officeNumber">Office Phone Number</label>
-            <input type="text" maxlength=15 class="form-control" id="officeNumber"  name="officeNumber" value="<?php echo $officeNumber;?>">
+            <input type="text" class="form-control" id="officeNumber"  name="officeNumber" value="<?php echo $officeNumber;?>">
           </div>
        </div>
        <div class="form-row">
@@ -138,7 +138,10 @@ $( "#submit-form" ).click(function(e) {
             <input type="text" class="form-control" id="companyName" name="companyName"  value="<?php echo $companyName;?>" required> 
           </div>
           <div class="form-group col-md-6">
-            <label for="emails">Email</label>
+            <label for="emails">Email 
+              <span>
+           
+            </label>
             <input type="emails" class="form-control" id="emails"  name="emails"  value="<?php echo $emails;?>">
           </div>
        </div>
@@ -189,6 +192,10 @@ $( "#submit-form" ).click(function(e) {
             <div class="form-check">
               <input class="form-check-input" type="radio" name="status" id="statusInactive" value="0"  <?php if($status == 0) echo 'Checked'; ?>>
               <label class="form-check-label" for="statusInactive">Inactive</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="status" id="statusDormant" value="9"  <?php if($status == 9) echo 'Checked'; ?>>
+              <label class="form-check-label" for="statusDormant">Dormant</label>
             </div>
         </div>
         

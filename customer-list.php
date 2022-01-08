@@ -15,7 +15,17 @@
 
 ?> 
 <?php include('header.php'); ?>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" class="init">
+	
 
+$(document).ready(function() {
+	$('#customers').DataTable();
+} );
+
+
+	</script>
 <body>
 
 <?php include('includes/navigation.php'); ?>
@@ -30,20 +40,20 @@
             <button type="button" class="btn btn-secondary mb-2 float-right" onclick="location.href='customer-card.php?mode=ADD';">+</button>
           </div>
           <div class="table-responsive">
-            <table class="table ">
+            <table class="table" id="customers">
               <thead class="thead-dark">
                 <tr>
                   <th>#</th>
                   <th>Company Name</th>
                   <th>Name</th>
-                  <th>Address</th>
+                  <th>Mobile Number</th>
                   <th>Handle</th>
                 </tr>
               </thead>
               <tbody>
               <?php
                 $customer = new Customer();
-                $result = $customer->getCustermerList();
+                $result = $customer->getNonDormantCustermerList();
               $cnt=1;
               while($row=mysqli_fetch_array($result))
               {
@@ -52,7 +62,7 @@
               <td scope="row"><?php echo $cnt; ?></td>
               <td><?php echo $row['companyName']; ?></td>
               <td><?php echo $row['firstName'] .' '. $row['lastName']; ?></td>
-              <td><?php echo $row['address']; ?></td>
+              <td><?php echo $row['phoneNumber']; ?></td>
               <td> <a href="customer-card.php?mode=EDIT&id=<?php echo $row['cID']; ?>" ><i class="fa fa-pencil" data-toggle="tooltip" data-placement="bottom" title="Edit"></i> </a> 
               | 
               <a href="schedule-call.php?mode=ADD&custid=<?php echo $row['cID']; ?>"> <i class="fa fa-phone" data-toggle="tooltip" data-placement="bottom" title="Schedule a call"></i> </a>
