@@ -13,13 +13,14 @@ class Calls
         
     }  
     public function addCalls($postObject) {
-        $query="INSERT INTO `customer_calls` (`callID`, `custID`, `userID`, `scheduleDate`, `notes`, `status`) VALUES (NULL, '".$postObject['custid']."', '".$_SESSION['id']."', '".$postObject['date']."', '".$postObject['note']."', '".$postObject['status']."');";
+
+        $query="INSERT INTO `customer_calls` (`callID`, `custID`, `userID`, `scheduleDate`, `notes`, `status`, `significance`) VALUES (NULL, '".$postObject['custid']."', '".$_SESSION['id']."', '".$postObject['date']."', '".$postObject['note']."', '".$postObject['status']."', '');";
         $result = mysqli_query($this->db,$query) or die(mysqli_connect_errno()." - Data cannot inserted");
         return $result;
     }
 
     public function getCallListForCustomer ($custID){
-        $result =  $this->db->query("Select * from `customer_calls` where custID =".$custID) ;
+        $result =  $this->db->query("Select * from `customer_calls` where custID =".$custID." ORDER BY `status` DESC") ;
         return $result;
     }
 
@@ -31,14 +32,15 @@ class Calls
 
     public function updateCallDetails ($postObject) {
   
-        $query="Update `customer_calls` SET `userID` = '".$_SESSION['id']."', `scheduleDate`='".$postObject['date']."', `notes`= '".$postObject['note']."', `status`='".$postObject['status']."' where `callID` = '".$postObject['id']."' "; 
+        $query="Update `customer_calls` SET `userID` = '".$_SESSION['id']."', `scheduleDate`='".$postObject['date']."', `notes`= '".$postObject['note']."', `status`='".$postObject['status']."' , `significance`='".$postObject['significance']."' where `callID` = '".$postObject['id']."' "; 
         $result = mysqli_query($this->db,$query) or die(mysqli_connect_errno()." - Data cannot updated");
         return $result;
     }
 
     public function getUpcomingCalls () {
         $today = date("Y-m-d");   
-        $result =  $this->db->query("Select `call`.`scheduleDate`, `call`.`notes`, `call`.`status`, `cust`.`firstName`, `cust`.`lastName`, `cust`.`companyName` from `customer_calls` AS `call`, `customers` AS `cust` where  `call`.`custID` =`cust`.`cID` and `call`.status='Scheduled' and `call`.scheduleDate >=". $today) ;
+        $result =  $this->db->query("Select `call`.`callID`, `call`.`scheduleDate`, `call`.`notes`, `call`.`status`, `cust`.`firstName`, `cust`.`lastName`, `cust`.`companyName`, `cust`.`cID` from `customer_calls` AS `call`, `customers` AS `cust` where  `call`.`custID` =`cust`.`cID` and `call`.status='Scheduled' and `call`.scheduleDate >='". $today ."' ORDER BY `scheduleDate` ASC" ) ;
+
         return $result;
 
     }

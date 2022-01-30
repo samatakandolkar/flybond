@@ -27,6 +27,7 @@
       $date = '';
       $note = '';
       $status = 'Scheduled';
+      $significance = '1';
 
     } else if(!empty($id) && $mode== 'EDIT') {
       $result = $calls->getCallDetailsbyID($id);
@@ -34,6 +35,7 @@
       $date = $r['scheduleDate'];
       $note = $r['notes'];
       $status = $r['status'];
+      $significance = $r['significance'];
     }
    
     }
@@ -45,7 +47,6 @@ $( document ).ready(function() {
 $( "#submit-form" ).click(function(e) {
   e.preventDefault();
   var data = $('form').serialize();
-  alert(data)
       $.ajax({
         type: "POST",
         url: "calls-crud.php",
@@ -53,7 +54,6 @@ $( "#submit-form" ).click(function(e) {
         dataType: 'text',
         success: function(res) {
           var resText = res.split("-");
-          alert(resText[1])
           if(resText[0] == 1) {
           $('#alert-message').removeClass('d-none');
           $('#alert-message').addClass('alert-success');
@@ -113,8 +113,19 @@ $( "#submit-form" ).click(function(e) {
             </select>
           </div>
         </div>
-
-      
+        <?php if ($mode == 'EDIT') { ?>
+        <div class="form-group row">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="significance" id="significance1" value="1"  <?php if($significance == 1) echo 'Checked'; ?>>
+            <label class="form-check-label" for="significance1">Significant</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="significance" id="significance2" value="0" <?php if($significance == 0) echo 'Checked'; ?>>
+            <label class="form-check-label" for="significance2">Insignificant</label>
+          </div>
+       </div>
+       <?php } ?>
+  
     <button type="submit" class="btn-primary btn-lg" id="submit-form">Submit </button>
     <button  type="button" class=" btn-secondary btn-lg" id="submit-form" onclick="history.back()"> Back </button>
 </form></div>

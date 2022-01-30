@@ -22,6 +22,7 @@
     $contactPersonDesignation =  $r['contactPersonDesignation'];
     $contactPersonPhoneNumber =  $r['contactPersonPhoneNumber'];
     $contactPersonEmail =  $r['contactPersonEmail'];
+    
    }
 ?> 
 <?php include('header.php'); ?>
@@ -29,7 +30,10 @@
 <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" class="init">
 $(document).ready(function() {
-	$('#call-list').DataTable();
+	$('#call-list').DataTable({
+    columnDefs: [ { type: 'date', 'targets': [1] } ],
+    order: [[ 1, 'desc' ]]
+  });
 } );
 </script>
 <body>
@@ -95,6 +99,7 @@ $(document).ready(function() {
                   <th>Date</th>
                   <th>Notes</th>
                   <th>Status</th>
+                  <th>Significance</th>
                   <th>Handle</th>
                 </tr>
               </thead>
@@ -106,13 +111,25 @@ $(document).ready(function() {
               $cnt=1;
               while($row=mysqli_fetch_array($result))
               {
+               $sign = '-'
+                if ($row['significance'] == '1') {
+                  $sign = 'Significant';
+                } else if ($row['significance'] == '0') {
+                  $sign = 'Insignificant';
+                }
+                 
             ?>
             <tr>
               <!-- <td scope="row"><?php echo $cnt; ?></td> -->
               <td><?php echo $row['scheduleDate']; ?></td>
               <td><?php echo $row['notes'] ; ?></td>
               <td><?php echo $row['status']; ?></td>
-              <td> <a href="schedule-call.php?mode=EDIT&custid=<?php echo $custid; ?>&id=<?php echo $row['callID']; ?>" ><i class="fa fa-pencil" data-toggle="tooltip" data-placement="bottom" title="Edit"></i> </a> 
+              <td><?php echo $sign; ?></td>
+              <td>
+                <?php if($row['status'] != 'Completed')  { ?>
+                   <a href="schedule-call.php?mode=EDIT&custid=<?php echo $custid; ?>&id=<?php echo $row['callID']; ?>" >
+                   <i class="fa fa-pencil" data-toggle="tooltip" data-placement="bottom" title="Edit"></i> </a> 
+                <?php } ?>
               </td>
             </tr>
             <?php
