@@ -116,6 +116,7 @@ $( "#submit-form" ).click(function(e) {
 
       
     <button type="submit" class="btn-primary btn-lg" id="submit-form">Submit </button>
+    <button  type="button" class=" btn-secondary btn-lg" id="submit-form" onclick="history.back()"> Back </button>
 </form></div>
           </div>
         </main>

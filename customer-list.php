@@ -10,7 +10,6 @@
       header("location:index.php");  
    }  else {
     $uid = $_SESSION['id'];
-    
    }
 
 ?> 
@@ -18,23 +17,17 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
 <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" class="init">
-	
-
 $(document).ready(function() {
 	$('#customers').DataTable();
 } );
-
-
 	</script>
 <body>
 
 <?php include('includes/navigation.php'); ?>
-
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 customer-list">
-          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+          <!-- <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h1>Customers</h1>
-          
-          </div>
+          </div> -->
           <div class="mb-2 clearfix">
             <h3 class="float-left">Customers List </h3>
             <button type="button" class="btn btn-secondary mb-2 float-right" onclick="location.href='customer-card.php?mode=ADD';">+</button>
@@ -47,6 +40,8 @@ $(document).ready(function() {
                   <th>Company Name</th>
                   <th>Name</th>
                   <th>Mobile Number</th>
+                  <th>Emails</th>
+                  <th>Ratings</th>
                   <th>Handle</th>
                 </tr>
               </thead>
@@ -63,6 +58,14 @@ $(document).ready(function() {
               <td><?php echo $row['companyName']; ?></td>
               <td><?php echo $row['firstName'] .' '. $row['lastName']; ?></td>
               <td><?php echo $row['phoneNumber']; ?></td>
+              <td><?php echo $row['emails']; ?></td>
+              <td><?php  
+              for ($x = 1; $x <=  $row['rating']; $x++) {
+                ?>
+                <i class="fa fa-star"></i>
+                 <?php
+                  }
+              ?></td>
               <td> <a href="customer-card.php?mode=EDIT&id=<?php echo $row['cID']; ?>" ><i class="fa fa-pencil" data-toggle="tooltip" data-placement="bottom" title="Edit"></i> </a> 
               | 
               <a href="schedule-call.php?mode=ADD&custid=<?php echo $row['cID']; ?>"> <i class="fa fa-phone" data-toggle="tooltip" data-placement="bottom" title="Schedule a call"></i> </a>

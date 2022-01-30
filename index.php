@@ -6,13 +6,13 @@
    $message = ''; 
    //print_r($_SESSION['login']);
    if ($user->session()) {  
-       header("location:dashboard.php");  
+       header("location:customer-list.php");  
    }
 
    if ($_SERVER["REQUEST_METHOD"] == "POST") {  
     $login = $user->login($_REQUEST['email'],$_REQUEST['password']);  
     if($login) {  
-        header("location:dashboard.php");  
+        header("location:customer-list.php");  
     }
     else {  
         $message = "Login Failed!";  

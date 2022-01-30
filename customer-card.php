@@ -33,6 +33,14 @@
       $rating = 1;
       $status = 1;
       $significance = 1;
+      $custCatID = '';
+      $custSubCatID = '';
+      $contactPersonName = '';
+      $contactPersonDesignation = '';
+      $contactPersonPhoneNumber = '';
+      $contactPersonEmail = '';
+
+      $displaySubcategory = false;
 
     } else if(!empty($id) && $mode== 'EDIT') {
       $pageTitle = 'Edit Customer Details';
@@ -54,9 +62,18 @@
       $rating = $r['rating'];
       $status = $r['status'];
       $significance = $r['significance'];
+      $custCatID =  $r['custCatID'];
+      $custSubCatID =  $r['custSubCatID'];
+      $contactPersonName =  $r['contactPersonName'];
+      $contactPersonDesignation =  $r['contactPersonDesignation'];
+      $contactPersonPhoneNumber =  $r['contactPersonPhoneNumber'];
+      $contactPersonEmail =  $r['contactPersonEmail'];
+
+      if($custSubCatID) {
+        $displaySubcategory = true;
+      }
     }
-   
-    }
+ }
 ?> 
 
 <?php include('header.php'); ?>
@@ -74,31 +91,60 @@ $( "#submit-form" ).click(function(e) {
         success: function(res) {
           var resText = res.split("-");
           if(resText[0] == 1) {
-          $('#alert-message').removeClass('d-none');
-          $('#alert-message').addClass('alert-success');
-          $('#alert-message').html(resText[1]);
+            $('#alert-message').removeClass('d-none');
+            $('#alert-message').addClass('alert-success');
+            $('#alert-message').html(resText[1]);
+            window.scrollTo(0, 0);
           } else {
             $('#alert-message').removeClass('d-none');
-          $('#alert-message').addClass('alert-danger');
-          $('#alert-message').html(resText[1]);
+            $('#alert-message').addClass('alert-danger');
+            $('#alert-message').html(resText[1]);
+            window.scrollTo(0, 0);
           }
-      
         },
         error: function (res) {
           $('#alert-message').removeClass('d-none');
           $('#alert-message').addClass('alert-danger');
           $('#alert-message').html('Something went Wrong!');
+          window.scrollTo(0, 0);
         }
     });
-  
+  });
 });
-});
-  </script>
 
+function onCategoryChange (selctedObject) {
+    var category_id = selctedObject;
+    $.ajax({
+    url: "customer-crud.php",
+    type: "POST",
+    data: {
+    mode: 'GET_CATEGORY',
+    category_id: category_id,
+    sub_category_id: <?php echo $custSubCatID;?>
+    },
+    cache: false,
+    success: function(result) {
+      if (!$.trim(result)){   
+        $("#sub-category-dropdown").hide(); 
+      } else {
+        $("#sub-category-dropdown").show(); 
+        $("#sub-category-dropdown-data").html(result);
+      }
+     
+    }
+    });
+  }
+  </script>
+  <?php if($mode == 'EDIT' && $custCatID) { ?>
+    <script>
+    $('#category-dropdown').ready(function() {
+      onCategoryChange(<?php echo $custCatID;?>);
+   });
+</script>
+  <?php } ?>
 <body>
 
 <?php include('includes/navigation.php'); ?>
-
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h3><?php echo $pageTitle; ?></h3>
@@ -138,15 +184,12 @@ $( "#submit-form" ).click(function(e) {
             <input type="text" class="form-control" id="companyName" name="companyName"  value="<?php echo $companyName;?>" required> 
           </div>
           <div class="form-group col-md-6">
-            <label for="emails">Email 
-              <span>
-           
-            </label>
+            <label for="emails">Email </label>
             <input type="emails" class="form-control" id="emails"  name="emails"  value="<?php echo $emails;?>">
           </div>
        </div>
-       <div class="form-row">
-          <div class="form-group col-md-6">
+   <div class="form-row">
+      <div class="form-group col-md-6">
         <label for="address">Address*</label>
         <input type="text" class="form-control" id="address" name="address" required value="<?php echo $address;?>">
       </div>
@@ -155,7 +198,28 @@ $( "#submit-form" ).click(function(e) {
           <input type="text" class="form-control" id="address2" name="address2" value="<?php echo $address2;?>">
       </div>
     </div>
-
+     <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="category-dropdown"> Category*</label>
+        <select class="form-control" id="category-dropdown" name="custCatID" onchange="onCategoryChange(this.value)">
+        <option value="">Select Category</option>
+        <?php
+            $result = $customer->getCustomerCatergories(0);
+            while($row=mysqli_fetch_array($result))
+              {
+            ?>
+            <option value="<?php echo $row['categoryID'];?>" <?php if($row['categoryID'] == $custCatID ) echo "Selected";?>><?php echo $row["Name"];?></option>
+        <?php
+              }
+            ?>
+            </select>
+      </div>
+      <div id="sub-category-dropdown" class="form-group col-md-6" style="display:none">
+          <label for="sub-category-dropdown">Select Subcategory</label>
+          <select class="form-control" id="sub-category-dropdown-data" name="custSubCatID" required>
+          </select>
+      </div>
+    </div> 
     <div class="form-row">
         <div class="form-group col-md-4">
           <label for="city">City</label>
@@ -170,10 +234,9 @@ $( "#submit-form" ).click(function(e) {
           <input type="text" class="form-control" id="zipcode" name="zipcode" value="<?php echo $zipcode;?>">
         </div>
   </div>
-
   <div class="form-row">
   <div class="form-group col-md-4">
-          <label for="state">Customer Ratings</label>
+          <label for="state">Ratings</label>
           <select id="rating" name="rating" class="form-control">
                 <option>Choose...</option>
                 <option value="1" <?php if($rating == 1) echo 'Selected'; ?>>1</option>
@@ -183,51 +246,63 @@ $( "#submit-form" ).click(function(e) {
                 <option value="5" <?php if($rating == 5) echo 'Selected'; ?>>5</option>
               </select>
         </div>
-        <div class="form-group col-md-4">
-          <label>Customer Status</label>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="status" id="statusActive" value="1" <?php if($status == 1) echo 'Checked'; ?>>
-              <label class="form-check-label" for="statusActive">Active</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="status" id="statusInactive" value="0"  <?php if($status == 0) echo 'Checked'; ?>>
-              <label class="form-check-label" for="statusInactive">Inactive</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="status" id="statusDormant" value="9"  <?php if($status == 9) echo 'Checked'; ?>>
-              <label class="form-check-label" for="statusDormant">Dormant</label>
-            </div>
-        </div>
-        
-        <div class="form-group col-md-4">
-          <label >Customer Significance </label>
-          <div class="form-check">
-              <input class="form-check-input" type="radio" name="significance" id="significance1" value="1"  <?php if($significance == 1) echo 'Checked'; ?>>
-              <label class="form-check-label" for="significance1">Responsive</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="significance" id="significance12" value="0" <?php if($significance == 0) echo 'Checked'; ?>>
-              <label class="form-check-label" for="significance2">Non-Responsive</label>
-            </div>
-        </div>
+  <div class="form-group col-md-4">
+    <label>Status</label>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="status" id="statusActive" value="1" <?php if($status == 1) echo 'Checked'; ?>>
+        <label class="form-check-label" for="statusActive">Active</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="status" id="statusInactive" value="0"  <?php if($status == 0) echo 'Checked'; ?>>
+        <label class="form-check-label" for="statusInactive">Inactive</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="status" id="statusDormant" value="9"  <?php if($status == 9) echo 'Checked'; ?>>
+        <label class="form-check-label" for="statusDormant">Dormant</label>
+      </div>
+  </div>   
+  <div class="form-group col-md-4">
+    <label >Significance </label>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="significance" id="significance1" value="1"  <?php if($significance == 1) echo 'Checked'; ?>>
+        <label class="form-check-label" for="significance1">Responsive</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="significance" id="significance2" value="0" <?php if($significance == 0) echo 'Checked'; ?>>
+        <label class="form-check-label" for="significance2">Non-Responsive</label>
+      </div>
+  </div>
   </div>
   <div class="form-group">
-    <label for="details">Customer Details</label>
+    <label for="details">Details</label>
     <textarea class="form-control" id="details" name="details" rows="3" ><?php echo $details; ?></textarea>
   </div>
-  <!-- <div class="form-group"></div>
-      <label>Call Notes</label><br>
-      <textarea name="CallNotes" rows="5" cols="30">
-      </textarea>
-  </div>
-  
-      <div class="form-group">
-          <label for="callScheduleTime">Next Call:</label>
-          <input type="datetime-local" id="callScheduleTime" name="callScheduledaytime">
-    </div> -->
+  <div>
+</div>
+<div><h4>Contact Person Details:<h4> </div>
+<div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="contactPersonName">Name*</label>
+            <input type="text" class="form-control" id="contactPersonName" name="contactPersonName" value="<?php echo $contactPersonName;?>" required> 
+          </div>
+          <div class="form-group col-md-6">
+            <label for="contactPersonDesignation">Designation</label>
+            <input type="text" class="form-control" id="contactPersonDesignation"  name="contactPersonDesignation" value="<?php echo $contactPersonDesignation;?>">
+          </div>
+       </div>
+       <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="contactPersonPhoneNumber">Phone Number</label>
+            <input type="text" class="form-control" id="contactPersonPhoneNumber" name="contactPersonPhoneNumber"  value="<?php echo $contactPersonPhoneNumber;?>" required> 
+          </div>
+          <div class="form-group col-md-6">
+            <label for="contactPersonEmail">Email </label>
+            <input type="emails" class="form-control" id="contactPersonEmail"  name="contactPersonEmail"  value="<?php echo $contactPersonEmail;?>">
+          </div>
+       </div>
     
-    <button type="submit" class="btn-primary btn-lg" id="submit-form">Submit </button>
-
+<button type="submit" class="btn-primary btn-lg" id="submit-form">Submit </button>
+<button  type="button" class=" btn-secondary btn-lg" id="submit-form" onclick="history.back()"> Back </button>
 </form>
           </div>
         </main>

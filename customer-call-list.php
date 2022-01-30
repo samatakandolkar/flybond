@@ -18,31 +18,80 @@
     $r = mysqli_fetch_assoc($result);
     $custName = $r['firstName'] . ' '. $r['middleName']. ' '.$r['lastName'];
     $companyName = $r['companyName'];
+    $contactPersonName =  $r['contactPersonName'];
+    $contactPersonDesignation =  $r['contactPersonDesignation'];
+    $contactPersonPhoneNumber =  $r['contactPersonPhoneNumber'];
+    $contactPersonEmail =  $r['contactPersonEmail'];
    }
-
 ?> 
 <?php include('header.php'); ?>
-
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" class="init">
+$(document).ready(function() {
+	$('#call-list').DataTable();
+} );
+</script>
 <body>
 
 <?php include('includes/navigation.php'); ?>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 customer-list">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h1>Call List</h1>
-          
+            <h3>Call List</h3>
+            <button type="button" class="btn btn-secondary mb-2 float-right"  title="Schedule Call" onclick="location.href='schedule-call.php?mode=ADD&custid=<?php echo $custid; ?>'">+</button>
+         
           </div>
-          <div class="mb-2 clearfix">
-            <h3 class="float-left">Customer: <b><?php echo $custName;?> </b> 
-            <br/>
-           Company Name: <b><?php echo $companyName;?> </b> </h3>
-            <button type="button" class="btn btn-secondary mb-2 float-right" onclick="location.href='schedule-call.php?mode=ADD&custid=<?php echo $custid; ?>'">+</button>
+          <div class="card">
+            <div class="card-header font-weight-bold">
+             Customer Details
+            </div>
+            <div class="card-body">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="firstName">Customer Name: </label> <?php echo $custName;?>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="middleName">Company Name:</label> <?php echo $companyName;?>
+               
+              </div>
+            </div>
+            </div>
           </div>
-          <div class="table-responsive">
-            <table class="table ">
+
+          <div class="card">
+            <div class="card-header font-weight-bold">
+              Contact Person Details
+            </div>
+            <div class="card-body">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="firstName">Name: </label> <?php echo $contactPersonName;?>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="middleName">Designation:</label> <?php echo $contactPersonDesignation;?>
+               
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="firstName">Phone Number:</label> <?php echo $contactPersonPhoneNumber;?>
+                
+              </div>
+              <div class="form-group col-md-6">
+                <label for="middleName">Email:</label> <?php echo $contactPersonEmail;?>
+                
+              </div>
+            </div>
+
+            </div>
+          </div>
+
+          <div class="table-responsive pt-2">
+            <table class="table" id="call-list">
               <thead class="thead-dark">
                 <tr>
-                  <th>#</th>
+                  <!-- <th>#</th> -->
                   <th>Date</th>
                   <th>Notes</th>
                   <th>Status</th>
@@ -59,9 +108,9 @@
               {
             ?>
             <tr>
-              <td scope="row"><?php echo $cnt; ?></td>
+              <!-- <td scope="row"><?php echo $cnt; ?></td> -->
               <td><?php echo $row['scheduleDate']; ?></td>
-              <td><?php echo $row['notes'] .' '. $row['lastName']; ?></td>
+              <td><?php echo $row['notes'] ; ?></td>
               <td><?php echo $row['status']; ?></td>
               <td> <a href="schedule-call.php?mode=EDIT&custid=<?php echo $custid; ?>&id=<?php echo $row['callID']; ?>" ><i class="fa fa-pencil" data-toggle="tooltip" data-placement="bottom" title="Edit"></i> </a> 
               </td>
